@@ -70,7 +70,6 @@ h1 {
     background: #FFD700;
     border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
     position: relative;
-    overflow: hidden;
 }
 
 .eye {
@@ -152,7 +151,6 @@ h1 {
     border-radius: 50%;
     border: 3px solid #8B4513;
     position: relative;
-    overflow: hidden;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
