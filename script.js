@@ -15,23 +15,36 @@ const grassValue = 10; // Hvor mange penge man får per græs
 // Funktion til at starte audio kontekst
 function initAudio() {
     if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        try {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+            console.log('Kunne ikke oprette AudioContext:', e);
+            return false;
+        }
     }
-    if (!isAudioStarted) {
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        gainNode.gain.value = 0.01;
-        oscillator.start();
-        oscillator.stop(audioContext.currentTime + 0.1);
-        isAudioStarted = true;
+    if (!isAudioStarted && audioContext) {
+        try {
+            // Opret en kort lyd for at starte konteksten
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            gainNode.gain.value = 0.01;
+            oscillator.start();
+            oscillator.stop(0.1);
+            isAudioStarted = true;
+        } catch (e) {
+            console.log('Kunne ikke starte audio:', e);
+            return false;
+        }
     }
+    return true;
 }
 
 // Funktion til at lave en kyllinges "cluck" lyd
 function playCluck(pitch = 800, duration = 0.15) {
-    initAudio();
+    if (!initAudio() || !audioContext) return;
+    
     const now = audioContext.currentTime;
     
     const osc1 = audioContext.createOscillator();
@@ -84,7 +97,8 @@ function playCluck(pitch = 800, duration = 0.15) {
 }
 
 function playBok(pitch = 1200, duration = 0.1) {
-    initAudio();
+    if (!initAudio() || !audioContext) return;
+    
     const now = audioContext.currentTime;
     
     const osc1 = audioContext.createOscillator();
@@ -114,7 +128,8 @@ function playBok(pitch = 1200, duration = 0.1) {
 }
 
 function playBoook(pitch = 400, duration = 0.25) {
-    initAudio();
+    if (!initAudio() || !audioContext) return;
+    
     const now = audioContext.currentTime;
     
     const osc1 = audioContext.createOscillator();
@@ -294,7 +309,15 @@ function flyToMoon() {
     if (rocketElement) rocketElement.classList.add('flying');
     if (moonElement) moonElement.classList.add('flying');
     
-    initAudio();
+    if (!initAudio() || !audioContext) {
+        setTimeout(() => {
+            showScreen('moonScreen');
+            if (rocketElement) rocketElement.classList.remove('flying');
+            if (moonElement) moonElement.classList.remove('flying');
+        }, 3000);
+        return;
+    }
+    
     const now = audioContext.currentTime;
     
     const noise = audioContext.createBufferSource();
@@ -332,6 +355,8 @@ function flyToMoon() {
 
 // ========== HOVEDKODE (KØRER NÅR DOM ER LOADED) ==========
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded - spil startet');
+    
     // DOM elementer
     const bokButton = document.getElementById('bokButton');
     const egg = document.getElementById('egg');
@@ -355,6 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Hovedknap - Bok boook!
     if (bokButton) {
         bokButton.addEventListener('click', () => {
+            console.log('Bok knap trykket');
             playBokBoook();
             showSoundText('Bok boook! 🐔');
             animateChicken();
@@ -374,11 +400,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 bokButton.innerHTML = '<span class="button-text">Tryk her for at sige BOK!</span><span class="button-emoji">🐣</span>';
             }, 2000);
         });
+    } else {
+        console.log('bokButton ikke fundet');
     }
 
     // Æg knap - Gå til butik
     if (eggButton) {
         eggButton.addEventListener('click', () => {
+            console.log('Æg knap trykket');
             playHighBokBoook();
             showSoundText('BOK BOOOK! 🥚🎵', '#FF8C00');
             animateEgg();
@@ -400,11 +429,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateMoneyDisplay();
             }, 1000);
         });
+    } else {
+        console.log('eggButton ikke fundet');
     }
 
     // Køb rumskib
     if (buySpaceshipButton) {
         buySpaceshipButton.addEventListener('click', () => {
+            console.log('Køb rumskib knap trykket');
             if (money >= spaceshipPrice) {
                 money -= spaceshipPrice;
                 hasSpaceship = true;
@@ -521,7 +553,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Check for audio support
     if (!window.AudioContext && !window.webkitAudioContext) {
-        console.log('Web Audio API not supported, falling back to text only');
+        console.log('Web Audio API not supported');
         const audioWarning = document.createElement('div');
         audioWarning.style.cssText = 'background: #FFFACD; padding: 10px; border-radius: 5px; margin: 10px 0; color: #8B4513;';
         audioWarning.textContent = 'Lyd understøttes ikke i din browser. Du kan stadig spille!';
@@ -551,4 +583,9 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         showSoundText('Tryk på knappen for at starte! 🎮', '#FF6347');
     }, 500);
+});
+
+// Faldback hvis DOMContentLoaded ikke virker
+window.addEventListener('load', () => {
+    console.log('Window loaded fallback');
 });
