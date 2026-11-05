@@ -1,4 +1,4 @@
-// Bok Bok Spil - Kyllingelyde
+// Bok Bok Spil - Kyllingelyde med forbedret lyd
 
 // DOM elementer
 const bokButton = document.getElementById('bokButton');
@@ -30,44 +30,40 @@ function initAudio() {
     }
 }
 
-// Funktion til at lave en kyllingelyd (Bok boook)
-function playBokSound(pitch = 440, duration = 0.3, isHighPitch = false) {
+// Funktion til at lave en kyllinges "cluck" lyd
+function playCluck(pitch = 800, duration = 0.15) {
     initAudio();
-    
-    // Opret oscillatorer for at lave en "bok" lyd
     const now = audioContext.currentTime;
     
-    // Første del af lyden (høj frekvens)
+    // Hoved oscillator (sawtooth for mere harmonisk indhold)
     const osc1 = audioContext.createOscillator();
     const gain1 = audioContext.createGain();
-    osc1.type = 'sine';
+    osc1.type = 'sawtooth';
     osc1.frequency.setValueAtTime(pitch, now);
-    if (isHighPitch) {
-        osc1.frequency.setValueAtTime(pitch * 1.5, now);
-    }
     osc1.connect(gain1);
     gain1.connect(audioContext.destination);
-    gain1.gain.setValueAtTime(0.1, now);
-    gain1.gain.exponentialRampToValueAtTime(0.01, now + duration);
+    
+    // Envelope for volumen
+    gain1.gain.setValueAtTime(0.05, now);
+    gain1.gain.exponentialRampToValueAtTime(0.01, now + duration * 0.3);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + duration);
+    
     osc1.start(now);
     osc1.stop(now + duration);
     
-    // Anden del (lavere frekvens for "ook" delen)
+    // Tilføj en sinus bølge for mere varme
     const osc2 = audioContext.createOscillator();
     const gain2 = audioContext.createGain();
     osc2.type = 'sine';
-    osc2.frequency.setValueAtTime(pitch * 0.7, now + duration * 0.5);
-    if (isHighPitch) {
-        osc2.frequency.setValueAtTime(pitch * 0.7 * 1.3, now + duration * 0.5);
-    }
+    osc2.frequency.setValueAtTime(pitch * 0.5, now);
     osc2.connect(gain2);
     gain2.connect(audioContext.destination);
-    gain2.gain.setValueAtTime(0.1, now + duration * 0.5);
-    gain2.gain.exponentialRampToValueAtTime(0.01, now + duration * 1.5);
-    osc2.start(now + duration * 0.5);
-    osc2.stop(now + duration * 1.5);
+    gain2.gain.setValueAtTime(0.02, now);
+    gain2.gain.exponentialRampToValueAtTime(0.005, now + duration);
+    osc2.start(now);
+    osc2.stop(now + duration);
     
-    // Tilføj en lille bit noise for at gøre det mere "kyllinge-agtigt"
+    // Tilføj noise for at gøre det mere organisk
     const noise = audioContext.createBufferSource();
     const noiseBuffer = audioContext.createBuffer(1, audioContext.sampleRate * duration, audioContext.sampleRate);
     const data = noiseBuffer.getChannelData(0);
@@ -78,10 +74,122 @@ function playBokSound(pitch = 440, duration = 0.3, isHighPitch = false) {
     const noiseGain = audioContext.createGain();
     noise.connect(noiseGain);
     noiseGain.connect(audioContext.destination);
-    noiseGain.gain.setValueAtTime(0.05, now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+    
+    // Filter noise for at gøre det mere "kyllinge-agtigt"
+    const filter = audioContext.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(2000, now);
+    filter.Q.setValueAtTime(2, now);
+    noise.connect(filter);
+    filter.connect(noiseGain);
+    
+    noiseGain.gain.setValueAtTime(0.01, now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
     noise.start(now);
     noise.stop(now + duration);
+}
+
+// Funktion til at lave "Bok" lyden (højere, skarpere)
+function playBok(pitch = 1200, duration = 0.1) {
+    initAudio();
+    const now = audioContext.currentTime;
+    
+    // Skarp attack med flere harmonics
+    const osc1 = audioContext.createOscillator();
+    const gain1 = audioContext.createGain();
+    osc1.type = 'sawtooth';
+    osc1.frequency.setValueAtTime(pitch, now);
+    osc1.frequency.exponentialRampToValueAtTime(pitch * 0.7, now + duration);
+    osc1.connect(gain1);
+    gain1.connect(audioContext.destination);
+    
+    gain1.gain.setValueAtTime(0.08, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + duration);
+    
+    osc1.start(now);
+    osc1.stop(now + duration);
+    
+    // Tilføj en sinus bølge for dybde
+    const osc2 = audioContext.createOscillator();
+    const gain2 = audioContext.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(pitch * 0.6, now);
+    osc2.connect(gain2);
+    gain2.connect(audioContext.destination);
+    gain2.gain.setValueAtTime(0.03, now);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + duration);
+    osc2.start(now);
+    osc2.stop(now + duration);
+}
+
+// Funktion til at lave "boook" lyden (lavere, længere)
+function playBoook(pitch = 400, duration = 0.25) {
+    initAudio();
+    const now = audioContext.currentTime;
+    
+    // Lav frekvens oscillator
+    const osc1 = audioContext.createOscillator();
+    const gain1 = audioContext.createGain();
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(pitch, now);
+    osc1.frequency.exponentialRampToValueAtTime(pitch * 0.8, now + duration);
+    osc1.connect(gain1);
+    gain1.connect(audioContext.destination);
+    
+    gain1.gain.setValueAtTime(0.06, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + duration);
+    
+    osc1.start(now);
+    osc1.stop(now + duration);
+    
+    // Tilføj en sawtooth for mere tekstur
+    const osc2 = audioContext.createOscillator();
+    const gain2 = audioContext.createGain();
+    osc2.type = 'sawtooth';
+    osc2.frequency.setValueAtTime(pitch * 1.5, now);
+    osc2.frequency.exponentialRampToValueAtTime(pitch * 1.2, now + duration);
+    osc2.connect(gain2);
+    gain2.connect(audioContext.destination);
+    gain2.gain.setValueAtTime(0.02, now);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + duration);
+    osc2.start(now);
+    osc2.stop(now + duration);
+}
+
+// Funktion til at afspille "Bok boook!"
+function playBokBoook() {
+    const now = audioContext.currentTime;
+    
+    // Bok
+    playBok(1200, 0.1);
+    
+    // Pause
+    setTimeout(() => {
+        playBoook(400, 0.25);
+    }, 150);
+    
+    // Tilføj en cluck i slutningen
+    setTimeout(() => {
+        playCluck(900, 0.1);
+    }, 400);
+}
+
+// Funktion til at afspille højere version "BOK BOOOK!"
+function playHighBokBoook() {
+    const now = audioContext.currentTime;
+    
+    // Højere Bok
+    playBok(1600, 0.1);
+    
+    // Pause
+    setTimeout(() => {
+        playBoook(550, 0.25);
+    }, 150);
+    
+    // Tilføj en højere cluck
+    setTimeout(() => {
+        playCluck(1100, 0.1);
+    }, 400);
 }
 
 // Funktion til at vise tekst med animation
@@ -114,7 +222,7 @@ function animateEgg() {
 // Hovedknap - Bok boook!
 bokButton.addEventListener('click', () => {
     // Afspil lyd
-    playBokSound(440, 0.3, false);
+    playBokBoook();
     
     // Vis tekst
     showSoundText('Bok boook! 🐔');
@@ -143,7 +251,7 @@ bokButton.addEventListener('click', () => {
 // Æg knap - Højere lyd
 eggButton.addEventListener('click', () => {
     // Afspil højere lyd
-    playBokSound(660, 0.3, true);
+    playHighBokBoook();
     
     // Vis tekst
     showSoundText('BOK BOOOK! 🥚🎵', '#FF8C00');
