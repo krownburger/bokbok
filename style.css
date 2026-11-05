@@ -1,0 +1,271 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background: linear-gradient(135deg, #87CEEB 0%, #FFD700 50%, #98FB98 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.game-container {
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 25px;
+    padding: 40px;
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border: 3px solid #FFD700;
+}
+
+h1 {
+    color: #FF6347;
+    font-size: 2.5em;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+.chicken-area {
+    margin: 30px 0;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chicken {
+    width: 120px;
+    height: 100px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.chicken:hover {
+    transform: scale(1.05);
+}
+
+.chicken-face {
+    width: 100%;
+    height: 100%;
+    background: #FFD700;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    position: relative;
+    overflow: hidden;
+}
+
+.eye {
+    width: 20px;
+    height: 20px;
+    background: #000;
+    border-radius: 50%;
+    position: absolute;
+    top: 30%;
+}
+
+.left-eye {
+    left: 20%;
+}
+
+.right-eye {
+    right: 20%;
+}
+
+.beak {
+    width: 0;
+    height: 0;
+    border-left: 25px solid #FF6347;
+    border-right: 25px solid #FF6347;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.bok-button {
+    background: linear-gradient(45deg, #FF6347, #FF8C00);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px auto;
+    box-shadow: 0 5px 15px rgba(255, 99, 71, 0.4);
+}
+
+.bok-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 99, 71, 0.6);
+    background: linear-gradient(45deg, #FF8C00, #FF6347);
+}
+
+.bok-button:active {
+    transform: translateY(1px);
+}
+
+.button-emoji {
+    font-size: 1.5em;
+}
+
+.egg {
+    width: 120px;
+    height: 150px;
+    margin: 30px auto;
+    position: relative;
+    transition: all 0.5s ease;
+}
+
+.egg.hidden {
+    display: none;
+}
+
+.egg-shell {
+    width: 100%;
+    height: 100%;
+    background: white;
+    border-radius: 50%;
+    border: 3px solid #8B4513;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.egg-beak {
+    width: 0;
+    height: 0;
+    border-left: 35px solid #FFD700;
+    border-right: 35px solid #FFD700;
+    border-top: 25px solid transparent;
+    border-bottom: 25px solid transparent;
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+.egg-label {
+    margin-top: 15px;
+    font-weight: bold;
+    color: #8B4513;
+    font-size: 1.1em;
+}
+
+.sound-display {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #FF6347;
+    min-height: 40px;
+    margin: 15px 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.instructions {
+    background: #FFFACD;
+    padding: 15px;
+    border-radius: 15px;
+    margin: 20px 0;
+    border: 2px dashed #FF6347;
+}
+
+.instructions p {
+    margin: 8px 0;
+    color: #8B4513;
+}
+
+.egg-button-container {
+    margin-top: 20px;
+}
+
+.egg-button {
+    background: linear-gradient(45deg, #98FB98, #7CFC00);
+    color: #8B4513;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 0 auto;
+    box-shadow: 0 5px 15px rgba(152, 251, 152, 0.4);
+}
+
+.egg-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(152, 251, 152, 0.6);
+    background: linear-gradient(45deg, #7CFC00, #98FB98);
+}
+
+.egg-button:active {
+    transform: translateY(1px);
+}
+
+.egg-emoji {
+    font-size: 1.5em;
+}
+
+.hidden {
+    display: none !important;
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-5deg);
+    }
+    75% {
+        transform: rotate(5deg);
+    }
+}
+
+.shake {
+    animation: shake 0.5s ease;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.pulse {
+    animation: pulse 0.5s ease;
+}

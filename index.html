@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bok Bok Spil - Kyllingen</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>🐔 Bok Bok Spil 🐔</h1>
+        
+        <div class="chicken-area">
+            <div id="chicken" class="chicken">
+                <div class="chicken-face">
+                    <div class="eye left-eye"></div>
+                    <div class="eye right-eye"></div>
+                    <div class="beak"></div>
+                </div>
+            </div>
+        </div>
+
+        <button id="bokButton" class="bok-button">
+            <span class="button-text">Tryk her for at sige BOK!</span>
+            <span class="button-emoji">🐣</span>
+        </button>
+
+        <div id="egg" class="egg hidden">
+            <div class="egg-shell">
+                <div class="egg-beak"></div>
+            </div>
+            <div class="egg-label">Æg med stort næb!</div>
+        </div>
+
+        <div id="soundDisplay" class="sound-display"></div>
+
+        <div class="instructions">
+            <p>Tryk på knappen for at høre kyllingen sige <strong>"Bok boook!"</strong></p>
+            <p>Når du har trykket, får du et æg med et større næb som kan sige en højere lyd!</p>
+        </div>
+
+        <div class="egg-button-container hidden" id="eggButtonContainer">
+            <button id="eggButton" class="egg-button">
+                <span>Tryk på ægget!</span>
+                <span class="egg-emoji">🥚</span>
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
