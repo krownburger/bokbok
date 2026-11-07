@@ -1,5 +1,9 @@
 // Bok Bok Spil - Service Worker for PWA
-const CACHE_NAME = 'bokbok-v1';
+const CACHE_NAME = 'bokbok-v2';
+const OFFLINE_URL = '/bokbok/';
+
+// Self-update: Change this version when you update the app
+const APP_VERSION = '2.0.0';
 const urlsToCache = [
   '/bokbok/',
   '/bokbok/index.html',
@@ -56,4 +60,20 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
+  
+  // Send a message to all clients that a new version is ready
+  event.waitUntil(
+    self.clients.matchAll().then((clients) => {
+      clients.forEach((client) => {
+        client.postMessage({ type: 'NEW_VERSION_AVAILABLE', version: APP_VERSION });
+      });
+    })
+  );
+});
+
+// Listen for messages from the client
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });

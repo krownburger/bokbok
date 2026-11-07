@@ -585,17 +585,136 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 500);
 });
 
-// Registrer Service Worker for PWA
+// Service Worker registration and update handling
+let serviceWorkerRegistration = null;
+
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/bokbok/service-worker.js')
             .then((registration) => {
                 console.log('ServiceWorker registration successful:', registration.scope);
+                serviceWorkerRegistration = registration;
+                
+                // Check for updates periodically
+                setInterval(checkForUpdates, 60000); // Check every minute
+                
+                // Listen for update messages from service worker
+                navigator.serviceWorker.addEventListener('message', (event) => {
+                    if (event.data && event.data.type === 'NEW_VERSION_AVAILABLE') {
+                        showUpdateNotification(event.data.version);
+                    }
+                });
             })
             .catch((error) => {
                 console.log('ServiceWorker registration failed:', error);
             });
     });
+}
+
+// Check for service worker updates
+function checkForUpdates() {
+    if (!serviceWorkerRegistration) return;
+    
+    serviceWorkerRegistration.update().then((registration) => {
+        if (registration.waiting) {
+            console.log('New version available');
+            showUpdateNotification('Ny version');
+        }
+    }).catch((error) => {
+        console.log('Update check failed:', error);
+    });
+}
+
+// Show update notification to user
+function showUpdateNotification(version) {
+    // Check if notification already exists
+    if (document.getElementById('updateNotification')) return;
+    
+    const notification = document.createElement('div');
+    notification.id = 'updateNotification';
+    notification.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: linear-gradient(45deg, #FF6347, #FF8C00);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        font-size: 1em;
+        font-weight: bold;
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: slideIn 0.3s ease;
+    `;
+    
+    notification.innerHTML = `
+        <span>🆕 Ny version tilgængelig!</span>
+        <button id="updateButton" style="
+            background: white;
+            color: #FF6347;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        ">Genindlæs</button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Add CSS animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Add click handler for update button
+    const updateButton = notification.querySelector('#updateButton');
+    updateButton.addEventListener('click', () => {
+        notification.style.animation = 'slideOut 0.3s ease forwards';
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+        
+        // Skip waiting and reload
+        if (serviceWorkerRegistration && serviceWorkerRegistration.waiting) {
+            serviceWorkerRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
+        }
+        window.location.reload();
+    });
+    
+    // Auto-remove after 10 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.animation = 'slideOut 0.3s ease forwards';
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }
+    }, 10000);
 }
 
 // Faldback hvis DOMContentLoaded ikke virker
