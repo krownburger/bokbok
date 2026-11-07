@@ -585,6 +585,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 500);
 });
 
+// Registrer Service Worker for PWA
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/bokbok/service-worker.js')
+            .then((registration) => {
+                console.log('ServiceWorker registration successful:', registration.scope);
+            })
+            .catch((error) => {
+                console.log('ServiceWorker registration failed:', error);
+            });
+    });
+}
+
 // Faldback hvis DOMContentLoaded ikke virker
 window.addEventListener('load', () => {
     console.log('Window loaded fallback');

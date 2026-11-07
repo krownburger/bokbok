@@ -1,0 +1,17 @@
+{
+  "name": "Bok Bok Spil",
+  "short_name": "BokBok",
+  "description": "Et sjovt kyllingespil hvor du kan samle græs, købe et rumskib og flyve til månen!",
+  "start_url": "/bokbok/",
+  "display": "standalone",
+  "background_color": "#87CEEB",
+  "theme_color": "#FF6347",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
